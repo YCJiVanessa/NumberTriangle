@@ -92,13 +92,15 @@ public class NumberTriangle {
      */
     public int retrieve(String path) {
         NumberTriangle current = this;
-        for  (int i = 0; i < path.length(); i++) {
-            char c = path.charAt(i);
-            if (c == 'l'){
-                current = current.left;
-            }
-            else if (c == 'r'){
-                current = current.right;
+        boolean v = !path.isEmpty();
+        if (v == true) {
+            for (int i = 0; i < path.length(); i++) {
+                char c = path.charAt(i);
+                if (c == 'l') {
+                    current = current.left;
+                } else if (c == 'r') {
+                    current = current.right;
+                }
             }
         }
         return current.getRoot();
@@ -120,44 +122,36 @@ public class NumberTriangle {
         // are more convenient to work with when reading the file contents.
         InputStream inputStream = NumberTriangle.class.getClassLoader().getResourceAsStream(fname);
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-
-
-        java.util.List<NumberTriangle> prevRow = null;
-
+        java.util.List<NumberTriangle> prev = null;
         // will need to return the top of the NumberTriangle,
         // so might want a variable for that.
         NumberTriangle top = null;
-
         String line = br.readLine();
         while (line != null) {
-
-            String trimmed = line.trim();
-            if (!trimmed.isEmpty()) {
-                String[] parts = trimmed.split("\\s+");
+            String t = line.trim();
+            if (!t.isEmpty()) {
+                String[] parts = t.split("\\s+");
                 java.util.List<NumberTriangle> row = new java.util.ArrayList<>(parts.length);
-
-                for (String p : parts) {
-                    row.add(new NumberTriangle(Integer.parseInt(p)));
+                for (String part : parts) {
+                    row.add(new NumberTriangle(Integer.parseInt(part)));
                 }
 
-                if (prevRow != null) {
+                if (prev != null) {
                     for (int i = 0; i < row.size(); i++) {
                         NumberTriangle child = row.get(i);
-                        if (i < prevRow.size()) {
-                            prevRow.get(i).setLeft(child);
+
+                        if (i < prev.size()) {
+                            prev.get(i).setLeft(child);
                         }
                         if (i > 0) {
-                            prevRow.get(i - 1).setRight(child);
+                            prev.get(i - 1).setRight(child);
                         }
                     }
                 } else {
                     top = row.get(0);
                 }
-
-                prevRow = row;
+                prev = row;
             }
-
-            //read the next line
             line = br.readLine();
         }
         br.close();
